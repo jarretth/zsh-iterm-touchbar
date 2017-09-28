@@ -123,11 +123,6 @@ function _displayDefault() {
   pecho "\033]1337;SetKeyLabel=F1=👉 $(echo $(pwd) | awk -F/ '{print $(NF-1)"/"$(NF)}')\a"
   bindkey -s '^[OP' "$PWD"
 
-  # GIT
-  # ---
-  # Check if the current directory is in a Git repository.
-  command git rev-parse --is-inside-work-tree &>/dev/null || return
-
   # Check if the current directory is in .git before running git checks.
   if [[ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]]; then
 
