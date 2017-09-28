@@ -9,16 +9,12 @@
 Currently it shows:
 
   * F1 - Current directory 👉
-  * F2 - Current git branch 🎋
-  * F3 - Current git repo status 🔥 / 🙌
-    * `+` — uncommitted changes in the index;
-    * `!` — unstaged changes;
-    * `?` — untracked changes;
-    * `$` — stashed changes;
-    * `⇣` — unpulled commits;
-    * `⇡` — unpushed commits.
-  * F4 - Push to origin branch (git push origin [branch]) ✉️
-  * F5 - Display `npm-run` scripts from `package.json` ⚡️
+  * F2 - Current git branch with status
+    * `✚` — uncommitted changes in the index;
+    * `✹` — unstaged changes;
+  * F3 - Nearest tag and if HEAD is:
+    * `🏷` — Tagged
+    * `📨` — Not tagged
 
 ### Requirements
 

@@ -147,14 +147,14 @@ function _displayDefault() {
     pecho "\033]1337;SetKeyLabel=F2=$touchbarIndicators ${current_branch}\a"
     # pecho "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
     pecho "\033]1337;SetKeyLabel=F3=${tag_indicator} ${current_tag}\a"
-    pecho "\033]1337;SetKeyLabel=F4=✉️ push\a";
+    # pecho "\033]1337;SetKeyLabel=F4=✉️ push\a";
 
     # bind git actions
     # bindkey -s '^[OQ' 'git branch -a \n'
     bindkey -s '^[OQ' 'git status \n'
     # bindkey -s '^[OR' 'git status \n'
     bindkey -s '^[OR' "${current_tag}"
-    bindkey -s '^[OS' "git push origin ${current_branch} \n"
+    # bindkey -s '^[OS' "git push origin ${current_branch} \n"
   fi
 
   # PACKAGE.JSON
