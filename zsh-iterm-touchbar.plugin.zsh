@@ -1,10 +1,12 @@
 # GIT
-GIT_UNCOMMITTED="${GIT_UNCOMMITTED:-+}"
-GIT_UNSTAGED="${GIT_UNSTAGED:-!}"
+GIT_UNCOMMITTED="${GIT_UNCOMMITTED:-✚}"
+GIT_UNSTAGED="${GIT_UNSTAGED:-✹}"
 GIT_UNTRACKED="${GIT_UNTRACKED:-?}"
 GIT_STASHED="${GIT_STASHED:-$}"
 GIT_UNPULLED="${GIT_UNPULLED:-⇣}"
 GIT_UNPUSHED="${GIT_UNPUSHED:-⇡}"
+GIT_TAGGED="${GIT_TAGGED:-🏷}"
+GIT_UNTAGGED="${GIT_UNTAGGED:-📨}"
 
 # Output name of current branch.
 git_current_branch() {
@@ -16,6 +18,20 @@ git_current_branch() {
     ref=$(command git rev-parse --short HEAD 2> /dev/null) || return
   fi
   echo ${ref#refs/heads/}
+}
+
+git_is_untagged() {
+    git describe --tags --exact-match HEAD &> /dev/null
+    local ret=$?
+    if [[ $ret == 128 ]] then
+        echo -n ${GIT_UNTAGGED}
+    fi
+}
+
+git_current_tag_base() {
+  local ref
+  ref=$(command git describe --tags --abbrev=0 HEAD 2> /dev/null)
+  echo ${ref}
 }
 
 # Uncommitted changes.
@@ -105,7 +121,7 @@ function _displayDefault() {
   # CURRENT_DIR
   # -----------
   pecho "\033]1337;SetKeyLabel=F1=👉 $(echo $(pwd) | awk -F/ '{print $(NF-1)"/"$(NF)}')\a"
-  bindkey -s '^[OP' 'pwd \n'
+  bindkey -s '^[OP' "$PWD"
 
   # GIT
   # ---
@@ -123,28 +139,35 @@ function _displayDefault() {
 
     indicators+="$(git_uncomitted)"
     indicators+="$(git_unstaged)"
-    indicators+="$(git_untracked)"
-    indicators+="$(git_stashed)"
-    indicators+="$(git_unpushed_unpulled)"
+    # indicators+="$(git_untracked)"
+    # indicators+="$(git_stashed)"
 
-    [ -n "${indicators}" ] && touchbarIndicators="🔥[${indicators}]" || touchbarIndicators="🙌";
+    [ -n "${indicators}" ] && touchbarIndicators="${indicators}" || touchbarIndicators="🙌";
 
-    pecho "\033]1337;SetKeyLabel=F2=🎋 $(git_current_branch)\a"
-    pecho "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
+    local current_tag=$(git_current_tag_base)
+    local tag_indicator="$(git_is_untagged)"
+    local current_branch=$(git_current_branch)
+    [ -n "${tag_indicator}" ] || tag_indicator="$GIT_TAGGED"
+
+    pecho "\033]1337;SetKeyLabel=F2=$touchbarIndicators ${current_branch}\a"
+    # pecho "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
+    pecho "\033]1337;SetKeyLabel=F3=${tag_indicator} ${current_tag}\a"
     pecho "\033]1337;SetKeyLabel=F4=✉️ push\a";
 
     # bind git actions
-    bindkey -s '^[OQ' 'git branch -a \n'
-    bindkey -s '^[OR' 'git status \n'
-    bindkey -s '^[OS' "git push origin $(git_current_branch) \n"
+    # bindkey -s '^[OQ' 'git branch -a \n'
+    bindkey -s '^[OQ' 'git status \n'
+    # bindkey -s '^[OR' 'git status \n'
+    bindkey -s '^[OR' "${current_tag}"
+    bindkey -s '^[OS' "git push origin ${current_branch} \n"
   fi
 
   # PACKAGE.JSON
   # ------------
-  if [[ -f package.json ]]; then
-    pecho "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
-    bindkey "${fnKeys[5]}" _displayNpmScripts
-  fi
+  # if [[ -f package.json ]]; then
+  #   pecho "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
+  #   bindkey "${fnKeys[5]}" _displayNpmScripts
+  # fi
 }
 
 function _displayNpmScripts() {
@@ -175,7 +198,7 @@ zle -N _displayNpmScripts
 
 precmd_iterm_touchbar() {
   if [[ $touchBarState == 'npm' ]]; then
-    _displayNpmScripts
+    # _displayNpmScripts
   else
     _displayDefault
   fi
