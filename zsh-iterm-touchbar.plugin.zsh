@@ -142,7 +142,7 @@ function _displayDefault() {
     # indicators+="$(git_untracked)"
     # indicators+="$(git_stashed)"
 
-    [ -n "${indicators}" ] && touchbarIndicators="${indicators}" || touchbarIndicators="🙌";
+    [ -n "${indicators}" ] && touchbarIndicators="${indicators}" || touchbarIndicators="";
 
     local current_tag=$(git_current_tag_base)
     local tag_indicator="$(git_is_untagged)"
